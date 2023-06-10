@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chat</title>
+<script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" 
+crossorigin="anonymous"></script>
+
+
+  
+  <script>
+    const socket = io();
+
+    // Mostrar mensajes anteriores
+    socket.on('previousMessages', (data) => {
+      const messages = data.split('\n');
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i].trim() !== '') {
+          addMessage(messages[i]);
+        }
+      }
+    });
+
+    // Mostrar nuevo mensaje
+    socket.on('message', (message) => {
+      addMessage(message);
+    });
+
+    // Enviar mensaje
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (message !== '') {
+        socket.emit('message', message);
+        input.value = '';
+        addMessage(message);
+      }
+    }
+
+    // Agregar mensaje al área de mensajes
+    function addMessage(message) {
+      const messageElement = document.createElement('p');
+      messageElement.textContent = message
+      const messagesArea = document.getElementById('messagesArea');
+      messagesArea.appendChild(messageElement);
+    }
+  </script>
+</head>
+<body>
+  <div id="messagesArea"></div>
+  <input type="text" id="messageInput" />
+  <button onclick="sendMessage()">Enviar</button>
+</body>
+</html>
+
